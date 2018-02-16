@@ -75,6 +75,13 @@ More info @ ${X.Bot.Server}`
 
       if (coin <= 0.5) {
         if (coin >= 0.1) {
+          // check if user has already sent one for today
+          const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, Time]);
+
+          if (numSendsToday.c > 0) {
+            // TODO: reject, already done.
+          }
+
           await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
           responder.sendSteem(cost, wait);
           return log(chalk.bgGreen.white.bold(`User ${data.from}, Just bought an upvote of ${data.amount}`))
