@@ -14,10 +14,10 @@ const X = require('./X.json');
 
      if (X.Settings.Refund === true) {
        //PRE-ORDER CLOSED
-       require('./events/Refund')(bot);
+       require('./Events/Refund')(bot);
      } else {
        // PRE-ORDER OPEN
-       require('./events/Upvoter')(bot);
+       require('./Events/Upvoter')(bot);
     }
   } else {
     // // Connection to the STEEM BlockChain.
@@ -26,9 +26,9 @@ const X = require('./X.json');
 
      if (X.Settings.Refund === true) {
        //PRE-ORDER CLOSED
-       require('./events/Refund')(bot);
+       require('./Events/Refund')(bot);
      } else {
        // PRE-ORDER OPEN
-       require('./events/Upvoter')(bot);
+       require('./Events/Upvoter')(bot);
     }
   }

@@ -3,7 +3,7 @@ const client = new Discord.Client();
 const X = require('../X.json');
 const chalk = require('chalk');
 const moment = require('moment');
-const messaging = require('../lib/Messaging.js');
+const messaging = require('../lib/messaging.js');
 const sqlite = require('sqlite');
 sqlite.open(`./db.sqlite`);
 

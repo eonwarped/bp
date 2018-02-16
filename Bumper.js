@@ -9,9 +9,9 @@ const fs = require('fs');
 const moment = require('moment');
 const sql = require('./lib/sql.js');
 const sqlite = require('sqlite');
-const messaging = require('./lib/Messaging.js');
-require('./events/eventLoader')(client);
-require('./steemit.js')
+const messaging = require('./lib/messaging.js');
+require('./Events/EventLoader')(client);
+require('./Steemit.js')
 
 client.login(X.Bot.Token);
 
@@ -27,11 +27,11 @@ function log(message) {
 // Loads up all files in the commands folder.
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
-fs.readdir('./Commands/', (err, files) => {
+fs.readdir('./commands/', (err, files) => {
   if (err) console.error(err);
   log(`Loading a total of ${files.length} commands.`);
   files.forEach(f => {
-    let props = require(`./Commands/${f}`);
+    let props = require(`./commands/${f}`);
     log(`Loading Command: ${props.info.name}. 👌`);
     client.commands.set(props.info.name, props);
     props.info.aliases.forEach(alias => {
@@ -44,8 +44,8 @@ fs.readdir('./Commands/', (err, files) => {
 client.reload = command => {
   return new Promise((resolve, reject) => {
     try {
-      delete require.cache[require.resolve(`./Commands/${command}`)];
-      let cmd = require(`./Commands/${command}`);
+      delete require.cache[require.resolve(`./commands/${command}`)];
+      let cmd = require(`./commands/${command}`);
       client.commands.delete(command);
       client.aliases.forEach((cmd, alias) => {
         if (cmd === command) client.aliases.delete(alias);

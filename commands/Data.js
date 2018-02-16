@@ -5,7 +5,7 @@ const messaging = require('../lib/messaging.js');
 const sql = require('../lib/sql.js');
 const sqlite = require('sqlite');
 const moment = require('moment');
-const strings = require('../strings/data.js');
+const strings = require('../strings/Data.js');
 const decimal = require('../lib/math.js').decimal;
 
 exports.info = {
