@@ -76,7 +76,7 @@ More info @ ${X.Bot.Server}`
       if (coin <= 0.5) {
         if (coin >= 0.1) {
           // check if user has already sent one for today
-          const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, Time]);
+          const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, moment(Time,'DD-MM-YYYY, HH:MM').format('DD-MM-YYYY')]);
 
           if (numSendsToday.c > 0) {
             // TODO: reject, already done.
