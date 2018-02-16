@@ -1,3 +1,3 @@
 :start
-nodemon Bumper.js
+node Bumper.js
 goto start

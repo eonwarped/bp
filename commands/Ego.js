@@ -6,6 +6,7 @@ const sql = require('../lib/sql.js');
 const sqlite = require('sqlite');
 const moment = require('moment');
 const Req = require('request');
+const X = require('../X.json');
 
 exports.info = {
   enabled: true,
@@ -22,6 +23,9 @@ const Uber = [
 
 exports.run = async function(client, msg, args) {
   const send = messaging.getSend(msg);
+  if (X.Settings.CMDLock === true) {
+    send(`Commands currently disabled !`);
+  } else {
   var QU = (Uber[~~(Math.random() * Uber.length)]);
   var user = args[0];
   var MMU = msg.mentions.users.first();
@@ -53,4 +57,5 @@ exports.run = async function(client, msg, args) {
         send(`${joke.value.joke}`)
       }
     })
+  }
 };

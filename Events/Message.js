@@ -11,7 +11,7 @@ module.exports = async msg => {
 
   // if (msg.author.bot) return;
   if (msg.channel.type == "dm") return;
-  if (msg.author.bot) return;
+  // if (msg.author.bot) return;
 
   let client = msg.client;
   const send = messaging.getSend(msg);

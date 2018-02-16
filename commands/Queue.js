@@ -8,6 +8,7 @@ const moment = require('moment');
 const strings = require('../strings/Queue.js');
 const decimal = require('../lib/math.js').decimal;
 const m = require('../strings/Queue.js');
+const X = require('../X.json');
 
 exports.info = {
   enabled: true,
@@ -19,27 +20,30 @@ exports.info = {
 
 exports.run = async function(client, msg, args) {
   const send = messaging.getSend(msg);
-  const steemit = args[0];
-  console.log(steemit);
+  if (X.Settings.CMDLock === true) {
+    send(`Commands currently disabled !`);
+  } else {
+    const steemit = args[0];
+    console.log(steemit);
 
-  if (!steemit) {
-    send(m.noName(), true, true, 'css');
-    send(m.usage(), true, true, 'ini');
-    return;
-  };
+    if (!steemit) {
+      send(m.noName(), true, true, 'css');
+      send(m.usage(), true, true, 'ini');
+      return;
+    };
 
-  var Array = [];
-  await sqlite.each(`SELECT * FROM PendingUpvotes WHERE Name LIKE '%${steemit}%'`, function(err, R) {
-    var Index;
-    Array.push(`${R.Blog}.\n\n`);
-    for (Index = 0; Index < Array.length; ++Index) {
-    }
-  });
+    var Array = [];
+    await sqlite.each(`SELECT * FROM PendingUpvotes WHERE Name LIKE '%${steemit}%'`, function(err, R) {
+      var Index;
+      Array.push(`${R.Blog}.\n\n`);
+      for (Index = 0; Index < Array.length; ++Index) {}
+    });
 
-  var result = Array.join(' ');
+    var result = Array.join(' ');
 
-  if (!result) return send(`[@${steemit}] has nothing in queue at this time !`, false, true, 'ini');
+    if (!result) return send(`[@${steemit}] has nothing in queue at this time !`, false, true, 'ini');
 
-  send(`These are the blogs [@${steemit}] has in queue !`);
-  send(result);
+    send(`These are the blogs [@${steemit}] has in queue !`);
+    send(result);
+  }
 };

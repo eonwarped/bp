@@ -7,6 +7,7 @@ const sqlite = require('sqlite');
 const moment = require('moment');
 const strings = require('../strings/Queue.js');
 const decimal = require('../lib/math.js').decimal;
+const X = require('../X.json');
 
 exports.info = {
   enabled: true,
@@ -17,6 +18,10 @@ exports.info = {
 }
 
 exports.run = async function(client, msg, args) {
+  const send = messaging.getSend(msg);
+  if (X.Settings.CMDLock === true) {
+    send(`Commands currently disabled !`);
+  } else {
     const send = messaging.getSend(msg);
         var Array = [];
         await sqlite.each(`select * from PendingUpvotes group by Name having count(*) > 1 limit 100`, function(err, R) {
@@ -28,4 +33,8 @@ exports.run = async function(client, msg, args) {
 
         var result = Array.join(' ');
         send(`${result}`, false, true, 'ini');
+  }
+
+
+
 }
