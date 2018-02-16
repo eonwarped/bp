@@ -61,11 +61,17 @@ More info @ ${X.Bot.Server}`
     This can be dure to plagiarism, spammer or ID theft.
     You will be unable to use the bumper service.
     More info @ ${X.Bot.Server}`
-  ]
+  ];
+
+  var dailyLimit = [
+    `Bumper Refund: You've already requested a vote today!
+    Only one request per user per day.
+    More info @ ${X.Bot.Server}`
+  ];
 
   var black = [
     `rohu03`, `bollywoodtown`
-  ]
+  ];
 
     if (type === 'SBD') {
       if (data.from === `${black}`) {
@@ -76,10 +82,13 @@ More info @ ${X.Bot.Server}`
       if (coin <= 0.5) {
         if (coin >= 0.1) {
           // check if user has already sent one for today
-          const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, moment(Time,'DD-MM-YYYY, HH:MM').format('DD-MM-YYYY')]);
+          const extractedDate = moment(Time,'DD-MM-YYYY, HH:MM').format('DD-MM-YYYY');
+          const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, extractedDate + "%"]);
+          console.log(numSendsToday);
 
           if (numSendsToday.c > 0) {
-            // TODO: reject, already done.
+            responder.sendSbd(data.amount, dailyLimit);
+            return log(chalk.bgYellow.white.bold(`User ${data.from}, reached Daily Limit.. -- Refund --`))
           }
 
           await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
