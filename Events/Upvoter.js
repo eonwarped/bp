@@ -70,8 +70,28 @@ More info @ ${X.Bot.Server}`
   ];
 
   var black = [
-    `rohu03`, `bollywoodtown`
+    `rohu03`, //2 Feb 2018
+    `bollywoodtown`, //2 Feb 2018
+    `andybarmer`, //2 Feb 2018
+    `blokbook`, //2 Feb 2018
+    `auomura`, //2 Feb 2018
+    `princecom`, //2 Feb 2018
+    `gokufahim`, //2 Feb 2018
+    `vichetuc`, //2 Feb 2018
+    `renasampson`, //2 Feb 2018
+    `shardaprasad`, //2 Feb 2018
+    `dlaur`, //2 Feb 2018
+    `onahski`, //14 Feb 2018
+    `kral789`, //14 Feb 2018
+    `shinysword`, //17 Feb 2018
+    `the.dragon`, //18 Feb 2018
+    `emmawill` //18 Feb 2018
   ];
+
+  var white = [
+    `earthnation`,
+    `ensteemit`
+  ]
 
     if (type === 'SBD') {
       if (data.from === `${black}`) {
@@ -81,6 +101,13 @@ More info @ ${X.Bot.Server}`
 
       if (coin <= 0.5) {
         if (coin >= 0.1) {
+
+          if (data.from === `${white}`) {
+            await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
+            responder.sendSteem(cost, wait);
+            return log(chalk.bgBlue.white.bold(`WHITELIST: ${data.from}, Just bought an upvote of ${data.amount}`));
+          }
+
           // check if user has already sent one for today
           const extractedDate = moment(Time,'DD-MM-YYYY, HH:MM').format('DD-MM-YYYY');
           const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, extractedDate + "%"]);

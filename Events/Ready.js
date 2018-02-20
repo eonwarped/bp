@@ -13,6 +13,12 @@ function log(message) {
 
 
 module.exports = async client => {
+  var lock = X.Settings.CMDLock;
+  if (lock === true) {
+    log(chalk.bgBlue.white('CMDLOCK: Active'));
+  } else {
+    log(chalk.bgBlue.white('CMDLOCK: Disabled'));
+  }
 
   await sqlite.run(sql.createTablePendingVotes);
   await sqlite.run(sql.createTableUsers);
