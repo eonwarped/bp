@@ -29,11 +29,22 @@ module.exports = async client => {
   log(chalk.bgMagenta.white('Discord Connection Online'));
   console.log(`-----------------------------------------`);
 
-  client.user.setPresence({ game: { name: Settings.Version, type: 0 } });
+  client.user.setPresence({
+    game: {
+      name: Settings.Version,
+      type: 0
+    }
+  });
 
   console.log(`---------------- Settings ----------------`);
   if (debug === true) {
     log(chalk.bgGreen.white.bold('Debug: Active'));
+    setTimeout(function() {
+      console.log(chalk.bgRed.white.bold(`
+-------------------------------------
+    WARNING: You'r in debug mode !
+-------------------------------------`));
+    }, 5000);
   } else {
     log(chalk.bgBlue.white.bold('Debug: Disabled'));
   }
