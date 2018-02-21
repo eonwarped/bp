@@ -2,7 +2,7 @@
 const RC = require('reaction-core');
 const RM = require('./Menu/index.js');
 const Discord = require('discord.js');
-const X = require('./X.json');
+const Settings = require('./Settings/Settings.json');
 const client = new RC.Client({autoreconnect: true});
 const CH = require('chalk');
 const fs = require('fs');
@@ -11,9 +11,13 @@ const sql = require('./lib/sql.js');
 const sqlite = require('sqlite');
 const messaging = require('./lib/messaging.js');
 require('./Events/EventLoader')(client);
-require('./Steemit.js')
+require('./Settings/Switches.js')
 
-client.login(X.Bot.Token);
+if (Settings.DevMode === true) {
+  client.login(Settings.DevToken);
+} else {
+  client.login(Settings.Token);
+}
 
 // Generates time to display in console.
 function log(message) {
@@ -67,9 +71,9 @@ client.reload = command => {
 // this will check the level of permissions on every commands file.
 client.elevation = message => {
   let lvl = 0;
-  let Mod = message.guild.roles.find('name', X.Staff.Mod);
+  let Mod = message.guild.roles.find('name', Settings.Staff.Mod);
   if (Mod && message.member.roles.has(Mod.id)) lvl = 2;
-  let Admin = message.guild.roles.find('name', X.Staff.Admin);
+  let Admin = message.guild.roles.find('name', Settings.Staff.Admin);
   if (Admin && message.member.roles.has(Admin.id)) lvl = 3;
   if (message.author.id === "189975082070704128") lvl = 4;
   return lvl;
@@ -85,14 +89,29 @@ client.on('message', async msg => {
 
   if (msg.author.bot) return;
 
-  if (input === "settings") {
-    const Q = X.Settings;
+  if (input === Settings.Prefix + "settings") {
+    const Q = Settings;
+
+    function DEV() {
+      if (Settings.DevMode === true) {
+        return 'Activated'
+      } else {
+        return 'Disabled'
+      }
+    }
+
       send(`
-Version   = [ ${X.Bot.Version} ]
+Version   = [ ${Q.Version} ]
+Prefix    = [ ${Q.Prefix} ]
+
 Debug     = [ ${Q.Debug} ]
 Refund    = [ ${Q.Refund} ]
-Min Price = [ ${Q.Min} ]
-Max Price = [ ${Q.Max} ]`)
+CMDLOCK   = [ ${Q.CMDlock} ]
+
+DEV MODE = [ ${DEV()} ]
+
+Min Price = [ ${Q.Price.Min} ]
+Max Price = [ ${Q.Price.Max} ]`)
 
   }
 

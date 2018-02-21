@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const X = require('../X.json');
+const Settings = require('../Settings/Settings.json');
 const chalk = require('chalk');
 const moment = require('moment');
 const messaging = require('../lib/messaging.js');
@@ -15,7 +15,7 @@ module.exports = async msg => {
 
   let client = msg.client;
   const send = messaging.getSend(msg);
-  const prefix = X.prefix;
+  const prefix = Settings.Prefix;
 
   // Checks the command settings you can find at the top
   // of every commands file. These are the settings.

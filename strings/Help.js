@@ -3,7 +3,7 @@
 
 
 
-const X = require('../X.json');
+const Settings = require('../Settings.json');
 const strings = {
 
   giveHelp: ()=> {
@@ -13,7 +13,7 @@ const strings = {
 --------------------------------------
 We will upvote your post with double the
 amount of SBD you send to us ! Currently
-our limit is ${X.Settings.MaxPrice} SBD per blog.
+our limit is ${Settings.Max} SBD per blog.
 --------------------------------------
 NOTE: Votes are done manually right now !
 --------------------------------------`

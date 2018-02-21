@@ -1,7 +1,7 @@
 
 // Made by Gizmo#5057
 
-const X = require('../X.json');
+const Settings = require('../Settings.json');
 const strings = {
 
   noName: () => {

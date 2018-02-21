@@ -3,8 +3,8 @@ const sql = require('../lib/sql.js');
 const sqlite = require('sqlite');
 const moment = require('moment');
 const chalk = require('chalk');
-const X = require('../X.json');
 const decimal = require('../lib/math.js').decimal;
+const Settings = require('../Settings/Settings.json');
 
 module.exports = async function(bot) {
 
@@ -36,30 +36,25 @@ module.exports = async function(bot) {
 
 
     var closed = [
-`Bumper Refund: Pre-Order is temporarily closed !
-More info @ https://discord.gg/3TsSTyf or visit our blog
-https://steemit.com/bumper/@bumper/bumper-update-pre-order-temporarily-closed`
-    ];
-
-    var voting = [
-      `Bumper Refund: We are currently voting !
-      During the voting process we are unable to to accept
-      new blogs as this will interfere with out database.
-      Please try again in a few minutes.
-      More info @ https://discord.gg/3TsSTyf`
+`Bumper Refund: Our pre-order list has received
+the maximum amount of requests. Therefore our pre-order
+list is temporarily closed. For more info please visit
+https://discord.gg/3TsSTyf`
     ];
 
     if (type === 'SBD') {
       if (coin <= 3) {
-          responder.sendSbd(data.amount, voting);
+          responder.sendSbd(data.amount, closed);
           return log(chalk.bgGreen.white.bold(`User ${data.from}, Refunded.. No more room`))
       }
     }
 
   };
 
-  console.log(chalk.bgGreen.white.bold('BUMPER REFUND ONLINE'));
-  if (X.Settings.Debug === true) {
+  setTimeout(function () {
+    log(chalk.bgGreen.white.bold('BUMPER REFUND ONLINE'));
+  }, 3000);
+  if (Settings.Debug === true) {
     bot.onDeposit('steembust', handleDeposit);
   } else {
     bot.onDeposit('bumper', handleDeposit);
