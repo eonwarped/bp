@@ -6,6 +6,7 @@ const sql = require('../lib/sql.js');
 const sqlite = require('sqlite');
 const moment = require('moment');
 const m = require('../strings/Queue.js');
+const Settings = require('../Settings/Settings.json');
 
 exports.info = {
   enabled: true,
