@@ -4,6 +4,7 @@ const RM = require('./Menu/index.js');
 const Discord = require('discord.js');
 const Settings = require('./Settings/Settings.json');
 const client = new RC.Client({autoreconnect: true});
+const chalk = require('chalk');
 const CH = require('chalk');
 const fs = require('fs');
 const moment = require('moment');
@@ -24,10 +25,20 @@ function log(message) {
   console.log(`[${moment().format('YYYY-MM-DD HH:MM:SS')}] ${message}`);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////     Module Exports     /////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+// logs console message when user joins server.
+client.on('guildMemberAdd', (member) => {
+  log(chalk.bgCyan.white.bold(`${member.user.username} joined our server`));
+});
+
+// Logs console message when user leave server.
+client.on('guildMemberRemove', (member) => {
+  log(chalk.bgMagenta.white.bold(`${member.user.username} left our server`));
+});
+
 // Loads up all files in the commands folder.
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
@@ -70,6 +81,9 @@ client.reload = command => {
 ////////////////////////////////////////////////////////////////////////////////
 // this will check the level of permissions on every commands file.
 client.elevation = message => {
+  // Stops the "Can not read role" error when user joins server.
+  if (message.author.bot) return;
+
   let lvl = 0;
   let Mod = message.guild.roles.find('name', Settings.Staff.Mod);
   if (Mod && message.member.roles.has(Mod.id)) lvl = 2;
