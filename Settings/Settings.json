@@ -3,10 +3,10 @@
 {
   "Version": "v2.2.1",
 
-  "Refund": true,
+  "Refund": false,
   "CMDlock": false,
-  "Debug": false,
-  "DevMode": false,
+  "Debug": true,
+  "DevMode": true,
 
   "Price": {
     "Min": "0.1 SBD",
