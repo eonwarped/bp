@@ -1,7 +1,7 @@
 
 // Made by Gizmo#5057
 
-const Settings = require('../Settings.json');
+const Settings = require('../Settings/Settings.json');
 const strings = {
 
   noName: () => {

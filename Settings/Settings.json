@@ -1,0 +1,33 @@
+
+
+{
+  "Version": "v2.2.1",
+
+  "Refund": true,
+  "CMDlock": false,
+  "Debug": false,
+  "DevMode": false,
+
+  "Price": {
+    "Min": "0.1 SBD",
+    "Max": "0.5 SBD"
+  },
+
+  "Prefix": "",
+  "Server": "https://discord.gg/3TsSTyf",
+
+  "Staff": {
+    "Mod": "Moderator",
+    "Admin": "Admin"
+  },
+
+  "Token": "",
+  "DevToken": "",
+  "DebugKey": "",
+
+  "Dev": {
+    "OwnerID": "189975082070704128",
+    "Name": "Gizmo#5057",
+    "Email": "bumperclub@outlook.com"
+  }
+}

@@ -71,33 +71,8 @@ More info @ ${Settings.Server}`
     More info @ ${Settings.Server}`
     ];
 
-    var blacklist = [
-      {steemit: `rohu03`, date: '2 Feb 2018'},
-      {steemit: `bollywoodtown`, date: `2 Feb 2018`},
-      {steemit: `andybarmer`, date: `2 Feb 2018`},
-      {steemit: `blokbook`, date: `2 Feb 2018`},
-      {steemit: `auomura`, date: `2 Feb 2018`},
-      {steemit: `princecom`, date: `2 Feb 2018`},
-      {steemit: `gokufahim`, date: `2 Feb 2018`},
-      {steemit: `vichetuc`, date: `2 Feb 2018`},
-      {steemit: `renasampson`, date: `2 Feb 2018`},
-      {steemit: `shardaprasad`, date: `2 Feb 2018`},
-      {steemit: `dlaur`, date: `2 Feb 2018`},
-      {steemit: `onahski`, date: `14 Feb 2018`},
-      {steemit: `kral789`, date: `14 Feb 2018`},
-      {steemit: `shinysword`, date: `17 Feb 2018`},
-      {steemit: `the.dragon`, date: `18 Feb 2018`},
-      {steemit: `emmawill`, date: `18 Feb 2018`},
-      {steemit: `terz17`, date: `19 Feb 2018`},
-      {steemit: `panamamama`, date: `19 Feb 2018`},
-      {steemit: `foodforcomfort`, date: `21 Feb 2018`},
-      {steemit: `badchistes`, date: `21 Feb 2018`}
-    ];
-
-    var whitelist = [
-      {steemit: `earthnation`, date: `21 Feb 2018`},
-      {steemit: `ensteemit`, date: `21 Feb 2018`}
-    ];
+    var Black = require('../Settings/Blacklist.json');
+    var White = require('../Settings/Whitelist.json');
 
     function findObjectByKey(array, key, value) {
       for (var i = 0; i < array.length; i++) {
@@ -108,30 +83,30 @@ More info @ ${Settings.Server}`
       return null;
     }
 
-    var black = findObjectByKey(blacklist, 'steemit', who);
-    var white = findObjectByKey(whitelist, 'steemit', who);
-
-
     if (type === 'SBD') {
-      // Find Steemit user on black or whitelist
-      var black = findObjectByKey(blacklist, 'steemit', who);
-      var white = findObjectByKey(whitelist, 'steemit', who);
+      try {
+        // Find Steemit user on black or whitelist
+        var black = findObjectByKey(Black.Blacklist, 'Name', who);
+        var white = findObjectByKey(White.Whitelist, 'Name', who);
 
-      if (black) {
-        // Blacklist users are not able to use the
-        // the bumper service at all.
-        responder.sendSbd(amount, 'Testing Blacklist');
-        log(chalk.bgRed.white.bold(`BLACKLIST: ${who} got refunded`));
-        return;
+        if (black) {
+          // Blacklist users are not able to use the
+          // the bumper service at all.
+          responder.sendSbd(amount, blmsg);
+          log(chalk.bgRed.white.bold(`BLACKLIST: ${who} got refunded`));
+          return;
 
-      } else {
-        if (white) {
-          // Whitelist users are able to send more blogs
-          // a day then the limit is set to.
-          await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
-          responder.sendSteem(cost, wait);
-          return log(chalk.bgBlue.white.bold(`WHITELIST: ${data.from}, Just bought an upvote of ${data.amount}`));
+        } else {
+          if (white) {
+            // Whitelist users are able to send more blogs
+            // a day then the limit is set to.
+            await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
+            responder.sendSteem(cost, wait);
+            return log(chalk.bgBlue.white.bold(`WHITELIST: ${data.from}, Just bought an upvote of ${data.amount}`));
+          }
         }
+      } catch (e) {
+        console.log(e);
       }
 
       if (coin <= 0.5) {

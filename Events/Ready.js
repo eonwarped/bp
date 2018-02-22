@@ -42,7 +42,7 @@ module.exports = async client => {
     setTimeout(function() {
       console.log(chalk.bgRed.white.bold(`
 -------------------------------------
-    WARNING: You'r in debug mode !
+    WARNING: You'r in debug mode !  .
 -------------------------------------`));
     }, 5000);
   } else {
@@ -57,6 +57,12 @@ module.exports = async client => {
 
   if (lock === true) {
     log(chalk.bgGreen.white.bold('CMDLock: Active'));
+    setTimeout(function() {
+      console.log(chalk.bgRed.white.bold(`
+----------------------------------------------
+  WARNING: CMD Lock - Auto Restart Disabled  .
+----------------------------------------------`));
+    }, 5000);
   } else {
     log(chalk.bgBlue.white.bold('CMDlock: Disabled'));
   }
