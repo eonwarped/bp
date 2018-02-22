@@ -5,8 +5,8 @@
 
   "Refund": false,
   "CMDlock": false,
-  "Debug": true,
-  "DevMode": true,
+  "Debug": false,
+  "DevMode": false,
 
   "Price": {
     "Min": "0.1 SBD",
