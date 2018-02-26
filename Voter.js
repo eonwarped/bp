@@ -45,7 +45,7 @@ if (!argv.F) {
 const voterName = argv.v;
 const wif = X[voterName].Posting;
 const activeWif = X[voterName].Active;
-const sqlGetQueueData = 'SELECT * FROM PendingUpvotes ' + argv.F + ' LIMIT ' + argv.n;
+const sqlGetQueueData = 'SELECT * FROM PendingUpvotes WHERE Processed is null OR Processed != 1 ' + argv.F + ' LIMIT ' + argv.n;
 log(sqlGetQueueData);
 
 const voteRegenSeconds = 5*60*60*24; // 5 day
@@ -162,17 +162,17 @@ async function refundUser(targetUser, sendAmount, memo) {
 }
 
 function shouldRefundRow(row) {
-  if (row.Date === 'P') {
+  if (row.Plagiarized === 1) {
     return 'is plagiarized';
   }
 }
 
-async function deletePendingRow(targetUser, targetPermLink) {
+async function markPendingRowProcessed(targetUser, targetPermLink) {
   if (argv.d) {
-    log("[Dry run] Would have deleted entry " + targetUser + "," + targetPermLink + " from pending upvotes table.");
+    log("[Dry run] Would have marked entry " + targetUser + "," + targetPermLink + " as processed.");
   } else {
-    await sqlite.run(`DELETE FROM PendingUpvotes WHERE Name = ? AND Blog = ?`, [targetUser, targetPermLink]);
-    log("Deleted entry " + targetUser + "," + targetPermLink + " from pending upvotes table.");
+    await sqlite.run(`UPDATE PendingUpvotes SET Processed = 1 WHERE Name = ? AND Blog = ?`, [targetUser, targetPermLink]);
+    log("Marked entry " + targetUser + "," + targetPermLink + " as processed.");
   }
 }
 
@@ -185,7 +185,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
   const refundReason = shouldRefundRow(row);
   if (refundReason) {
     await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} ${refundReason}.`);
-    await deletePendingRow(targetUser, targetPermLink);
+    await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
 
@@ -217,7 +217,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
   if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
     log("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
     await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} is too old.`);
-    await deletePendingRow(targetUser, targetPermLink);
+    await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
 
@@ -232,8 +232,8 @@ async function voteAndUpdateWeight(prop, voter, row) {
       weight
     );
     log("Voted " + authorToVote + " post at " + permlinkToVote + " with weight " + weight + "/10000 and expected value $" + sbdValue);
-    await deletePendingRow(targetUser, targetPermLink);
   }
+  await markPendingRowProcessed(targetUser, targetPermLink);
 
   voter.power = voter.power - usedPower;
 
