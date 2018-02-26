@@ -44,7 +44,7 @@ if (!argv.F) {
 }
 const voterName = argv.v;
 const wif = X[voterName].Posting;
-log(wif);
+const activeWif = X[voterName].Active;
 const sqlGetQueueData = 'SELECT * FROM PendingUpvotes ' + argv.F + ' LIMIT ' + argv.n;
 log(sqlGetQueueData);
 
@@ -147,63 +147,106 @@ async function fetchVoterProperties(prop) {
   return voter;
 }
 
-async function voteAndUpdateWeight(prop, voter, targetUser, targetPermLink, sbdValue) {
-    var currentPower = voter.power;
-    log("Power before vote: " + formatWeight(currentPower));
-    // lets reverse formula now.
-    // sbdValue = effectiveVestingShares * usedPower * 1000000 * rewardBalance * feedPrice / (recentClaims * steemit100Percent)
-    var usedPower = sbdValue * prop.recentClaims * steemit100Percent / (voter.effectiveVestingShares * 1000000 * prop.rewardBalance * prop.feedPrice);
+async function refundUser(targetUser, sendAmount, memo) {
+  if (argv.d) {
+      log("[Dry run] Would have refunded " + targetUser + " " + sendAmount + " SBD with memo " + memo);
+  } else {
+    await steem.broadcast.transferAsync(
+      activeWif,
+      voterName,
+      targetUser,
+      sendAmount,
+      memo
+    );
+  }
+}
 
-    if (voter.power < usedPower) {
-      throw new Error("Cannot make target. Not enough power.");
-    }
+function shouldRefundRow(row) {
+  if (row.Date === 'P') {
+    return 'is plagiarized';
+  }
+}
 
-    // usedPower = (power * weight / steemit100Percent + maxVoteDenom - 1) / maxVoteDenom
-    var weight = Math.floor((usedPower * prop.maxVoteDenom + 1 - prop.maxVoteDenom) * steemit100Percent / currentPower);
-    if (weight <= 0) {
-      throw new Error("Cannot make target. Assigned weight negative, target vote value too low.");
-    }
-    if (weight > steemit100Percent) {
-      throw new Error("Cannot make target. Exceeds max possible value of vote.");
-    }
+async function deletePendingRow(targetUser, targetPermLink) {
+  if (argv.d) {
+    log("[Dry run] Would have deleted entry " + targetUser + "," + targetPermLink + " from pending upvotes table.");
+  } else {
+    await sqlite.run(`DELETE FROM PendingUpvotes WHERE Name = ? AND Blog = ?`, [targetUser, targetPermLink]);
+    log("Deleted entry " + targetUser + "," + targetPermLink + " from pending upvotes table.");
+  }
+}
 
-    const authorToVote = extractAuthorFromLink(targetPermLink);
-    const permlinkToVote = extractPermlinkFromLink(targetPermLink);
+async function voteAndUpdateWeight(prop, voter, row) {
+  const targetUser = row.Name;
+  const targetPermLink = row.Blog;
+  const sendAmount = row.Amount;
+  const sbdValue = getAmount(sendAmount) * argv.r;
 
-    // Fetch vote content
-    const post = await steem.api.getContentAsync(authorToVote, permlinkToVote);
-    const postAgeMillis = Date.now() - Date.parse(post.created);
-    if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
-      throw new Error("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
-    }
+  const refundReason = shouldRefundRow(row);
+  if (refundReason) {
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} ${refundReason}.`);
+    await deletePendingRow(targetUser, targetPermLink);
+    return;
+  }
 
-    if (argv.d) {
-      log("[Dry run] Would have voted " + authorToVote + " post at " + permlinkToVote + " with weight " + weight + "/10000 and expected value $" + sbdValue);
-    } else {
-      await steem.broadcast.voteAsync(
-        wif,
-        voterName,
-        authorToVote,
-        permlinkToVote,
-        weight
-      );
-      log("Voted " + authorToVote + " post at " + permlinkToVote + " with weight " + weight + "/10000 and expected value $" + sbdValue);
-      await sqlite.run(`DELETE FROM PendingUpvotes WHERE Name = ? AND Blog = ?`, [targetUser, targetPermLink]);
-      log("Deleted entry from pending upvotes table.");
-    }
+  const currentPower = voter.power;
+  log("Power before vote: " + formatWeight(currentPower));
+  // lets reverse formula now.
+  // sbdValue = effectiveVestingShares * usedPower * 1000000 * rewardBalance * feedPrice / (recentClaims * steemit100Percent)
+  const usedPower = sbdValue * prop.recentClaims * steemit100Percent / (voter.effectiveVestingShares * 1000000 * prop.rewardBalance * prop.feedPrice);
 
-    voter.power = voter.power - usedPower;
+  if (voter.power < usedPower) {
+    throw new Error("Cannot make target. Not enough power.");
+  }
 
-    // regen
-    var regenPower = (steemit100Percent * argv.w) / voteRegenSeconds;
-    voter.power = Math.min(voter.power + regenPower, steemit100Percent);
-    log("Power after vote, after " + argv.w + " seconds regen: " + formatWeight(voter.power));
+  // usedPower = (power * weight / steemit100Percent + maxVoteDenom - 1) / maxVoteDenom
+  var weight = Math.floor((usedPower * prop.maxVoteDenom + 1 - prop.maxVoteDenom) * steemit100Percent / currentPower);
+  if (weight <= 0) {
+    throw new Error("Cannot make target. Assigned weight negative, target vote value too low.");
+  }
+  if (weight > steemit100Percent) {
+    throw new Error("Cannot make target. Exceeds max possible value of vote.");
+  }
 
-    if (voter.power < minPowerThreshold) {
-      throw new Error("Voting Power below threshold. Stopping.");
-    }
+  const authorToVote = extractAuthorFromLink(targetPermLink);
+  const permlinkToVote = extractPermlinkFromLink(targetPermLink);
 
-    return weight;
+  // Fetch vote content
+  const post = await steem.api.getContentAsync(authorToVote, permlinkToVote);
+  const postAgeMillis = Date.now() - Date.parse(post.created);
+  if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
+    log("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} is too old.`);
+    await deletePendingRow(targetUser, targetPermLink);
+    return;
+  }
+
+  if (argv.d) {
+    log("[Dry run] Would have voted " + authorToVote + " post at " + permlinkToVote + " with weight " + weight + "/10000 and expected value $" + sbdValue);
+  } else {
+    await steem.broadcast.voteAsync(
+      wif,
+      voterName,
+      authorToVote,
+      permlinkToVote,
+      weight
+    );
+    log("Voted " + authorToVote + " post at " + permlinkToVote + " with weight " + weight + "/10000 and expected value $" + sbdValue);
+    await deletePendingRow(targetUser, targetPermLink);
+  }
+
+  voter.power = voter.power - usedPower;
+
+  // regen
+  var regenPower = (steemit100Percent * argv.w) / voteRegenSeconds;
+  voter.power = Math.min(voter.power + regenPower, steemit100Percent);
+  log("Power after vote, after " + argv.w + " seconds regen: " + formatWeight(voter.power));
+
+  if (voter.power < minPowerThreshold) {
+    throw new Error("Voting Power below threshold. Stopping.");
+  }
+
+  return weight;
 }
 
 async function voteOnQueue(prop, voter) {
@@ -219,7 +262,7 @@ async function voteOnQueue(prop, voter) {
     log("User: " + row.Name);
     log("Amount: " + row.Amount);
     log("Blog: " + row.Blog);
-    var weight = await voteAndUpdateWeight(prop, voter, row.Name, row.Blog, getAmount(row.Amount) * argv.r);
+    var weight = await voteAndUpdateWeight(prop, voter, row);
     log("Weight to use: " + formatWeight(weight));
     log("Waiting " + argv.w + " seconds...");
     sleep(argv.w*1000);
