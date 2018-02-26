@@ -1,6 +1,7 @@
 ﻿const sqlite = require('sqlite');
 const steem = require('steem');
 const sleep = require('system-sleep');
+const settings = require('./Settings/settings.json');
 
 const X = require('./X.json');
 
@@ -11,6 +12,8 @@ const argv = require('yargs').usage('$0 [args]')
 .describe('d', 'Dry run, Default is false.')
 .nargs('n', 1)
 .describe('n', 'Limit number of posts, Default is 1000')
+.nargs('u', 1)
+.describe('u', 'Sets refunds from account.')
 .nargs('m', 1)
 .describe('m', 'Minimum Vote Power Threshold, Default is 0.8')
 .nargs('w', 1)
@@ -24,6 +27,9 @@ const argv = require('yargs').usage('$0 [args]')
 .help('h')
 .argv;
 
+if (!argv.u) {
+  argv.u = 'bumper';
+}
 if (!argv.n) {
   argv.n = 1000;
 }
@@ -37,14 +43,16 @@ if (!argv.v) {
   argv.v = 'bumper';
 }
 if (!argv.r) {
-  argv.r = 3;
+  argv.r = settings.Return;
 }
 if (!argv.F) {
   argv.F = '';
 }
 const voterName = argv.v;
+const activeUserName = argv.u;
 const wif = X[voterName].Posting;
-const activeWif = X[voterName].Active;
+const activeWif = X[activeUserName].Active;
+
 const sqlGetQueueData = 'SELECT * FROM PendingUpvotes WHERE (Processed is null OR Processed != 1) ' + argv.F + ' LIMIT ' + argv.n;
 log(sqlGetQueueData);
 
@@ -153,7 +161,7 @@ async function refundUser(targetUser, sendAmount, memo) {
   } else {
     await steem.broadcast.transferAsync(
       activeWif,
-      voterName,
+      activeUserName,
       targetUser,
       sendAmount,
       memo
@@ -163,7 +171,7 @@ async function refundUser(targetUser, sendAmount, memo) {
 
 function shouldRefundRow(row) {
   if (row.Plagiarized === 1) {
-    return 'is plagiarized';
+    return 'is plagiarized or pf low quality';
   }
 }
 
@@ -184,7 +192,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
 
   const refundReason = shouldRefundRow(row);
   if (refundReason) {
-    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} ${refundReason}.`);
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${refundReason}. ${targetPermLink}`);
     await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
@@ -214,9 +222,9 @@ async function voteAndUpdateWeight(prop, voter, row) {
   // Fetch vote content
   const post = await steem.api.getContentAsync(authorToVote, permlinkToVote);
   const postAgeMillis = Date.now() - Date.parse(post.created);
-  if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
+  if (postAgeMillis > 6.5 * 24 * 60 * 60 * 1000) {
     log("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
-    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} is too old.`);
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post is too old. ${targetPermLink}`);
     await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
