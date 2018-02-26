@@ -164,7 +164,7 @@ async function refundUser(targetUser, sendAmount, memo) {
 
 function shouldRefundRow(row) {
   if (row.Plagiarized === 1) {
-    return 'is plagiarized';
+    return 'is plagiarized or pf low quality';
   }
 }
 
@@ -185,7 +185,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
 
   const refundReason = shouldRefundRow(row);
   if (refundReason) {
-    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} ${refundReason}.`);
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${refundReason}. ${targetPermLink}`);
     await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
@@ -215,7 +215,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
   // Fetch vote content
   const post = await steem.api.getContentAsync(authorToVote, permlinkToVote);
   const postAgeMillis = Date.now() - Date.parse(post.created);
-  if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
+  if (postAgeMillis > 6.5 * 24 * 60 * 60 * 1000) {
     log("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
     await refundUser(targetUser, sendAmount, `Bumper Refund: Post is too old. ${targetPermLink}`);
     await markPendingRowProcessed(targetUser, targetPermLink);
