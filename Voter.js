@@ -217,7 +217,7 @@ async function voteAndUpdateWeight(prop, voter, row) {
   const postAgeMillis = Date.now() - Date.parse(post.created);
   if (postAgeMillis > 7 * 24 * 60 * 60 * 1000) {
     log("Post too old, Age in days: " + postAgeMillis / (24 * 60 * 60 * 1000));
-    await refundUser(targetUser, sendAmount, `Bumper Refund: Post ${targetPermLink} is too old.`);
+    await refundUser(targetUser, sendAmount, `Bumper Refund: Post is too old. ${targetPermLink}`);
     await markPendingRowProcessed(targetUser, targetPermLink);
     return;
   }
