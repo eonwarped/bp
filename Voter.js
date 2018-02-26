@@ -45,7 +45,7 @@ if (!argv.F) {
 const voterName = argv.v;
 const wif = X[voterName].Posting;
 const activeWif = X[voterName].Active;
-const sqlGetQueueData = 'SELECT * FROM PendingUpvotes WHERE Processed is null OR Processed != 1 ' + argv.F + ' LIMIT ' + argv.n;
+const sqlGetQueueData = 'SELECT * FROM PendingUpvotes WHERE (Processed is null OR Processed != 1) ' + argv.F + ' LIMIT ' + argv.n;
 log(sqlGetQueueData);
 
 const voteRegenSeconds = 5*60*60*24; // 5 day
