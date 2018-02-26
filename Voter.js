@@ -12,6 +12,8 @@ const argv = require('yargs').usage('$0 [args]')
 .describe('d', 'Dry run, Default is false.')
 .nargs('n', 1)
 .describe('n', 'Limit number of posts, Default is 1000')
+.nargs('u', 1)
+.describe('u', 'Sets refunds from account.')
 .nargs('m', 1)
 .describe('m', 'Minimum Vote Power Threshold, Default is 0.8')
 .nargs('w', 1)
@@ -25,6 +27,9 @@ const argv = require('yargs').usage('$0 [args]')
 .help('h')
 .argv;
 
+if (!argv.u) {
+  argv.u = 'bumper';
+}
 if (!argv.n) {
   argv.n = 1000;
 }
@@ -44,8 +49,10 @@ if (!argv.F) {
   argv.F = '';
 }
 const voterName = argv.v;
+const activeUserName = argv.u;
 const wif = X[voterName].Posting;
-const activeWif = X[voterName].Active;
+const activeWif = X[activeUserName].Active;
+
 const sqlGetQueueData = 'SELECT * FROM PendingUpvotes WHERE Processed is null OR Processed != 1 ' + argv.F + ' LIMIT ' + argv.n;
 log(sqlGetQueueData);
 
@@ -154,7 +161,7 @@ async function refundUser(targetUser, sendAmount, memo) {
   } else {
     await steem.broadcast.transferAsync(
       activeWif,
-      voterName,
+      activeUserName,
       targetUser,
       sendAmount,
       memo
