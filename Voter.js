@@ -1,6 +1,7 @@
 ﻿const sqlite = require('sqlite');
 const steem = require('steem');
 const sleep = require('system-sleep');
+const settings = require('./Settings/settings.json');
 
 const X = require('./X.json');
 
@@ -37,7 +38,7 @@ if (!argv.v) {
   argv.v = 'bumper';
 }
 if (!argv.r) {
-  argv.r = 3;
+  argv.r = settings.Return;
 }
 if (!argv.F) {
   argv.F = '';

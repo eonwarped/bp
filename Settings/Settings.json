@@ -3,8 +3,11 @@
 {
   "Version": "v2.2.1",
 
+  "Wait": "4",
+  "Return": 2.1,
+
   "Refund": false,
-  "CMDlock": false,
+  "CMDlock": true,
   "Debug": false,
   "DevMode": false,
 
