@@ -1,4 +1,19 @@
+Installation
 
 npm install express-generator -g
 
+
+Start
+
 DEBUG=bumperweb:* npm start
+
+
+Go to port, and go to the /pending route, e.g.
+
+http://localhost:PORT/pending
+
+For now has query parameter for limiting number
+
+http://localhost:PORT/pending?q=10
+
+
