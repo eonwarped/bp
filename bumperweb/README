@@ -1,0 +1,4 @@
+
+npm install express-generator -g
+
+DEBUG=bumperweb:* npm start
