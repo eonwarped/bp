@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  table
+    each val in values
+      tr
+        td
+          p= val.Date
+        td
+          p= val.Name
+        td
+          p= val.Amount
+        td
+          p= val.Blog
+    else
+      li There are no values
