@@ -171,7 +171,7 @@ async function refundUser(targetUser, sendAmount, memo) {
 
 function shouldRefundRow(row) {
   if (row.Plagiarized === 1) {
-    return 'is plagiarized or pf low quality';
+    return 'is plagiarized or of low quality';
   }
 }
 
