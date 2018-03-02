@@ -1,15 +1,16 @@
 
 
 {
-  "Version": "v2.2.1",
+  "Version": "v2.3",
 
-  "Wait": "4",
-  "Return": 2.1,
+  "Wait": "1",
+  "Return": 2.3,
+  "MaxPerDay": 4,
 
   "Refund": false,
-  "CMDlock": true,
-  "Debug": false,
-  "DevMode": false,
+  "CMDlock": false,
+  "Debug": true,
+  "DevMode": true,
 
   "Price": {
     "Min": "0.1 SBD",
