@@ -18,7 +18,7 @@ router.get('/pending', async function(req, res, next) {
     const rows = await sqlite.all(sqlGetQueueData, [limit]);
 
     res.render('pending', {
-      title: 'Pending Queue',
+      limit: limit,
       values: rows
     });
 
