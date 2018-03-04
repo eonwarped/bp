@@ -41,7 +41,7 @@ module.exports = async function(bot) {
     var wait = [
       `Bumper: We have received your transaction.
 The upvote are done manually twice a day and you get it from @bumper or @flagship.
-NOTE: Currently it takes up to 3 days before you get your vote due to demand.
+NOTE: Currently it takes up to ${Settings.Wait} day(s) before you get your vote due to demand.
 You can see your Queue Position on our "Daily Report" blog.
 More info @ ${Settings.Server}`
     ]
