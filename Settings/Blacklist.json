@@ -2,28 +2,7 @@
 
 {
   "Blacklist": [
-    {"Name": "rohu03", "Date": "2 Feb 2018", "Reason": "plagiarizing other people work, no crediting either."},
-    {"Name": "bollywoodtown", "Date": "2 Feb 2018", "Reason": "Only posting documentaries made by others."},
-    {"Name": "andybarmer", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "blokbook", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "auomura", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "princecom", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "gokufahim", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "vichetuc", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "renasampson", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "shardaprasad", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "dlaur", "Date": "2 Feb 2018", "Reason": ""},
-    {"Name": "onahski", "Date": "14 Feb 2018", "Reason": ""},
-    {"Name": "kral789", "Date": "14 Feb 2018", "Reason": ""},
-    {"Name": "shinysword", "Date": "17 Feb 2018", "Reason": ""},
-    {"Name": "the.dragon", "Date": "18 Feb 2018", "Reason": ""},
-    {"Name": "emmawill", "Date": "18 Feb 2018", "Reason": ""},
-    {"Name": "terz17", "Date": "19 Feb 2018", "Reason": ""},
-    {"Name": "foodforcomfort", "Date": "21 Feb 2018", "Reason": ""},
-    {"Name": "badchistes", "Date": "21 Feb 2018", "Reason": ""},
-    {"Name": "panamamama", "Date": "22 Fev 2018", "Reason": "Only posting 1 picture ofsome ass. Taken of unsuspecting girls, also has no permissions to take / use the pictures."},
-    {"Name": "moregwei", "Date": "22 Feb 2018", "Reason": "Only posting random meme he did not create."},
-    {"Name": "mindreader", "Date": "22 Feb 2018", "Reason": "Posting random memes, most of he did not create. No other information then 1 picture."}
+    {"Name": "", "Date": "", "Reason": ""}
   ],
 
   "Default": [{"Name": "", "Date": "", "Reason": ""}]

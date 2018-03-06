@@ -1,14 +1,14 @@
 
 
 {
-  "Version": "v2.3",
+  "Version": "v2.4.1",
 
   "Wait": "1",
   "Return": 2.3,
-  "MaxPerDay": 4,
+  "MaxPerDay": 6,
 
   "Refund": false,
-  "CMDlock": false,
+  "CMDlock": true,
   "Debug": true,
   "DevMode": true,
 

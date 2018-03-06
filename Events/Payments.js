@@ -38,14 +38,6 @@ module.exports = async function(bot) {
 
     const Time = moment().format('DD-MM-YYYY, HH:MM');
 
-    var wait = [
-      `Bumper: We have received your transaction.
-The upvote are done manually twice a day and you get it from @bumper or @flagship.
-NOTE: Currently it takes up to ${Settings.Wait} day(s) before you get your vote due to demand.
-You can see your Queue Position on our "Daily Report" blog.
-More info @ ${Settings.Server}`
-    ]
-
     var high = [
       `Bumper Refund: You've send to much. !
 Minimums is 0.1 and maximum we accept 0.5 SBD per blog.
@@ -84,31 +76,6 @@ More info @ ${Settings.Server}`
     }
 
     if (type === 'SBD') {
-      try {
-        // Find Steemit user on black or whitelist
-        var black = findObjectByKey(Black.Blacklist, 'Name', who);
-        var white = findObjectByKey(White.Whitelist, 'Name', who);
-
-        if (black) {
-          // Blacklist users are not able to use the
-          // the bumper service at all.
-          responder.sendSbd(amount, blmsg);
-          log(chalk.bgRed.white.bold(`BLACKLIST: ${who} got refunded`));
-          return;
-
-        } else {
-          if (white) {
-            // Whitelist users are able to send more blogs
-            // a day then the limit is set to.
-            await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
-            responder.sendSteem(cost, wait);
-            return log(chalk.bgBlue.white.bold(`WHITELIST: ${data.from}, Just bought an upvote of ${data.amount}`));
-          }
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
       if (coin <= 0.5) {
         if (coin >= 0.1) {
 
@@ -117,7 +84,41 @@ More info @ ${Settings.Server}`
           const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, extractedDate + "%"]);
           console.log(numSendsToday);
 
-          if (numSendsToday.c > 0) {
+          var wait = [
+            `[DAILY LIMIT: ${numSendsToday.c} of ${Settings.MaxPerDay} Blog(s)] --
+      We have received your transaction. Your will receive your vote in
+      estimated ${Settings.Wait} day(s) from now. You can find the queue
+      in our daily report blog and on our Discord. More info or for help
+      please visit our Discord ${Settings.Server}`
+
+          ]
+
+          try {
+            // Find Steemit user on black or whitelist
+            var black = findObjectByKey(Black.Blacklist, 'Name', who);
+            var white = findObjectByKey(White.Whitelist, 'Name', who);
+
+            if (black) {
+              // Blacklist users are not able to use the
+              // the bumper service at all.
+              responder.sendSbd(amount, blmsg);
+              log(chalk.bgRed.white.bold(`BLACKLIST: ${who} got refunded`));
+              return;
+
+            } else {
+              if (white) {
+                // Whitelist users are able to send more blogs
+                // a day then the limit is set to.
+                await sqlite.run(sql.dataInsertUser, [data.from, data.amount, Time, data.memo]);
+                responder.sendSteem(cost, wait);
+                return log(chalk.bgBlue.white.bold(`WHITELIST: ${data.from}, Just bought an upvote of ${data.amount}`));
+              }
+            }
+          } catch (e) {
+            console.log(e);
+          }
+
+          if (numSendsToday.c > Settings.MaxPerDay) {
             responder.sendSbd(data.amount, dailyLimit);
             return log(chalk.bgYellow.white.bold(`User ${data.from}, reached Daily Limit.. -- Refund --`))
           }
@@ -145,17 +146,17 @@ More info @ ${Settings.Server}`
     }
   };
 
-  setTimeout(function () {
+  setTimeout(function() {
     log(chalk.bgGreen.white.bold('Bumper Payment Script Online'));
   }, 3000);
   if (Settings.Debug === true) {
     bot.onDeposit('steembust', handleDeposit);
-    setTimeout(function () {
+    setTimeout(function() {
       log(chalk.bgYellow.white.bold('Yo Fuckers, Steembust here !'));
     }, 3000);
   } else {
     bot.onDeposit('bumper', handleDeposit);
-    setTimeout(function () {
+    setTimeout(function() {
       log(chalk.bgYellow.white.bold('Yo Fuckers, Bumper here !'));
     }, 3000);
   }
