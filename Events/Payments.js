@@ -82,10 +82,11 @@ More info @ ${Settings.Server}`
           // check if user has already sent one for today
           const extractedDate = moment(Time, 'DD-MM-YYYY, HH:MM').format('DD-MM-YYYY');
           const numSendsToday = await sqlite.get(sql.dataCheckUser, [data.from, extractedDate + "%"]);
+          const fixLimit = numSendsToday.c + 1;
           console.log(numSendsToday);
 
           var wait = [
-            `[DAILY LIMIT: ${numSendsToday.c} of ${Settings.MaxPerDay} Blog(s)] --
+            `[DAILY LIMIT: ${fixLimit} of ${Settings.MaxPerDay} Blog(s)] --
       We have received your transaction. Your will receive your vote in
       estimated ${Settings.Wait} day(s) from now. You can find the queue
       in our daily report blog and on our Discord. More info or for help
