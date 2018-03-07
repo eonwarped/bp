@@ -40,27 +40,21 @@ module.exports = async function(bot) {
 
     var high = [
       `Bumper Refund: You've send to much. !
-Minimums is 0.1 and maximum we accept 0.5 SBD per blog.
-More info @ ${Settings.Server}`
+      Minimums is 0.1 and maximum we accept 0.5 SBD per blog.
+      More info @ ${Settings.Server}`
     ];
 
     var low = [
       `Bumper Refund: You've send to little.
-Minimums is 0.1 and maximum we accept 0.5 SBD per blog.
-More info @ ${Settings.Server}`
+      Minimums is 0.1 and maximum we accept 0.5 SBD per blog.
+      More info @ ${Settings.Server}`
     ];
 
     var blmsg = [
       `Bumper Refund: You'r blacklisted from our service!
-    This can be dure to plagiarism, spammer or ID theft.
-    You will be unable to use the bumper service.
-    More info @ ${Settings.Server}`
-    ];
-
-    var dailyLimit = [
-      `Bumper Refund: You've already requested a vote today!
-    Only one request per user per day.
-    More info @ ${Settings.Server}`
+      This can be dure to plagiarism, spammer or ID theft.
+      You will be unable to use the bumper service.
+      More info @ ${Settings.Server}`
     ];
 
     var Black = require('../Settings/Blacklist.json');
@@ -85,14 +79,26 @@ More info @ ${Settings.Server}`
           const fixLimit = numSendsToday.c + 1;
           console.log(numSendsToday);
 
+          // Gets the countdown for the daily limit memo
+          var x = moment(new Date());
+          var xH = 23 - x.hours();
+          var xM = 60 - x.minutes();
+          var xS = 60 - x.seconds();
+
           var wait = [
             `[DAILY LIMIT: ${fixLimit} of ${Settings.MaxPerDay} Blog(s)] --
-      We have received your transaction. Your will receive your vote in
-      estimated ${Settings.Wait} day(s) from now. You can find the queue
-      in our daily report blog and on our Discord. More info or for help
-      please visit our Discord ${Settings.Server}`
+            We have received your transaction. Your will receive your vote in
+            estimated ${Settings.Wait} day(s) from now. You can find the queue
+            in our daily report blog and on our Discord. More info or for help
+            please visit our Discord ${Settings.Server}`
+          ];
 
-          ]
+          var dailyLimit = [
+            `[DAILY LIMIT: ${numSendsToday.c} of ${Settings.MaxPerDay} Blog(s)] --
+            You have reached your daily limit. You can send new entries again
+            in ( ${xH} Hours ${xM} Minutes and ${xS} Seconds ). --
+            Need help our info ? visit our Discord at ${Settings.Server}`
+          ];
 
           try {
             // Find Steemit user on black or whitelist
@@ -119,7 +125,7 @@ More info @ ${Settings.Server}`
             console.log(e);
           }
 
-          if (numSendsToday.c > Settings.MaxPerDay) {
+          if (numSendsToday.c >= Settings.MaxPerDay) {
             responder.sendSbd(data.amount, dailyLimit);
             return log(chalk.bgYellow.white.bold(`User ${data.from}, reached Daily Limit.. -- Refund --`))
           }

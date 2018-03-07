@@ -24,7 +24,7 @@ module.exports = async client => {
 
   console.log(`-----------------------------------------`);
   log(chalk.bgBlue.white('Bumper Upvote Service'));
-  log(chalk.bgBlue.white('Made By Gizmo#5057'));
+  log(chalk.bgMagenta.white(`VERSION: ${Settings.Version}`));
   log(chalk.bgCyan.white('Http://CuriosityDiscord.com'));
   log(chalk.bgMagenta.white('Discord Connection Online'));
   console.log(`-----------------------------------------`);
@@ -60,7 +60,7 @@ module.exports = async client => {
     setTimeout(function() {
       console.log(chalk.bgRed.white.bold(`
 ----------------------------------------------
-  WARNING: CMD Lock - Auto Restart Disabled  .
+               WARNING: CMD Lock             .
 ----------------------------------------------`));
     }, 5000);
   } else {
