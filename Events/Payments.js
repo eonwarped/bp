@@ -87,7 +87,7 @@ module.exports = async function(bot) {
 
           var wait = [
             `[DAILY LIMIT: ${fixLimit} of ${Settings.MaxPerDay} Blog(s)] --
-            We have received your transaction. Your will receive your vote in
+            We have received your transaction. You will receive your vote in
             estimated ${Settings.Wait} day(s) from now. You can find the queue
             in our daily report blog and on our Discord. More info or for help
             please visit our Discord ${Settings.Server}`
