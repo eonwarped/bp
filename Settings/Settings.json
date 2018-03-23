@@ -1,11 +1,11 @@
 
 
 {
-  "Version": "v2.4.2",
+  "Version": "v2.4.3",
 
-  "Wait": "1",
+  "Wait": "3",
   "Return": 2.3,
-  "MaxPerDay": 6,
+  "MaxPerDay": 5,
 
   "Refund": false,
   "CMDlock": false,

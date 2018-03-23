@@ -11,6 +11,7 @@ const moment = require('moment');
 const sql = require('./lib/sql.js');
 const sqlite = require('sqlite');
 const messaging = require('./lib/messaging.js');
+const error = require('./strings/error.js');
 require('./Events/EventLoader')(client);
 require('./Settings/Switches.js')
 
@@ -102,6 +103,26 @@ client.on('message', async msg => {
   const input = msg.content.toLowerCase();
 
   if (msg.author.bot) return;
+
+  if (input.startsWith(`https://steemit`) ||
+      input.startsWith(`https://busy`) ||
+      input.startsWith(`https://dtube`) ||
+      input.startsWith(`https://d.tube`) ||
+      input.startsWith(`http://steemit`) ||
+      input.startsWith(`http://busy`) ||
+      input.startsWith(`http://dtube`) ||
+      input.startsWith(`http://d.tube`)) {
+
+        if (msg.channel.id === '401463657084485633') {
+          return;
+        } else {
+          msg.delete();
+          send(`<@${msg.author.id}>`, true, false);
+          return send(error.selfish(), true, true, 'css');
+        }
+      };
+
+
 
   if (input === Settings.Prefix + "settings") {
     const Q = Settings;
