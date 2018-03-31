@@ -3,7 +3,9 @@ const RC = require('reaction-core');
 const RM = require('./Menu/index.js');
 const Discord = require('discord.js');
 const Settings = require('./Settings/Settings.json');
-const client = new RC.Client({autoreconnect: true});
+const client = new RC.Client({
+  autoreconnect: true
+});
 const chalk = require('chalk');
 const CH = require('chalk');
 const fs = require('fs');
@@ -105,22 +107,27 @@ client.on('message', async msg => {
   if (msg.author.bot) return;
 
   if (input.startsWith(`https://steemit`) ||
-      input.startsWith(`https://busy`) ||
-      input.startsWith(`https://dtube`) ||
-      input.startsWith(`https://d.tube`) ||
-      input.startsWith(`http://steemit`) ||
-      input.startsWith(`http://busy`) ||
-      input.startsWith(`http://dtube`) ||
-      input.startsWith(`http://d.tube`)) {
+    input.startsWith(`https://busy`) ||
+    input.startsWith(`https://dtube`) ||
+    input.startsWith(`https://d.tube`) ||
+    input.startsWith(`http://steemit`) ||
+    input.startsWith(`http://busy`) ||
+    input.startsWith(`http://dtube`) ||
+    input.startsWith(`http://d.tube`)) {
 
-        if (msg.channel.id === '401463657084485633') {
-          return;
-        } else {
-          msg.delete();
-          send(`<@${msg.author.id}>`, true, false);
-          return send(error.selfish(), true, true, 'css');
-        }
-      };
+    if (msg.channel.id === '401463657084485633' ||
+        msg.channel.id === '407274820024270858' ||
+        msg.channel.id === '409423056725999634') {
+      if (msg.author.id === "189975082070704128") {
+        return;
+      }
+    } else {
+      msg.delete();
+      send(`<@${msg.author.id}>`, true, false);
+      return send(error.selfish(), true, true, 'css');
+    }
+  };
+
 
 
 
@@ -135,7 +142,7 @@ client.on('message', async msg => {
       }
     }
 
-      send(`
+    send(`
 Version   = [ ${Q.Version} ]
 Prefix    = [ ${Q.Prefix} ]
 
