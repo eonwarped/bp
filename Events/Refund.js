@@ -38,14 +38,16 @@ module.exports = async function(bot) {
     var closed = [
 `Bumper Refund: Our pre-order list has received
 the maximum amount of requests. Therefore our pre-order
-list is temporarily closed. For more info please visit
-https://discord.gg/3TsSTyf`
+list is temporarily closed. We will open once again soon.
+For more info please visit https://discord.gg/3TsSTyf`
     ];
 
     if (type === 'SBD') {
       if (coin <= 3) {
+        if (coin >= 0.1) {
           responder.sendSbd(data.amount, closed);
           return log(chalk.bgGreen.white.bold(`User ${data.from}, Refunded.. No more room`))
+        }
       }
     }
 
